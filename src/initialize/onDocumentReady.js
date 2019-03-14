@@ -1,3 +1,3 @@
 export default function (cb) {
-    (function(){cb()})()
-};
+	(function(){cb();})();
+}

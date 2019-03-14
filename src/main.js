@@ -1,13 +1,14 @@
-import onDocumentReady from "./initialize/onDocumentReady";
-import createAppWrapper from "./initialize/createAppWrapper";
-import appWrapper from "./singletons/appWrapper";
-import loadData from "./dataHandling/loadData";
-import Data from './chart_data.txt';
+import onDocumentReady from './initialize/onDocumentReady';
+import createAppWrapper from './initialize/createAppWrapper';
+import AppWrapper from './singletons/AppWrapper';
+import loadData from './dataHandling/loadData';
+// eslint-disable-next-line no-unused-vars
+import Data from './chart_data.txt'; 
 
 onDocumentReady(() => {
-    const appWrapperElement = createAppWrapper();
-    appWrapper.setElement(appWrapperElement);
-    loadData('./chart_data.txt', (res) => {
-        appWrapper.drawData(res);
-    })
+	const appWrapperElement = createAppWrapper();
+	AppWrapper.setElement(appWrapperElement);
+	loadData('./chart_data.txt', (res) => {
+		AppWrapper.drawData(res);
+	});
 });
