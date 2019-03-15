@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
 	entry: './src/main.js',
@@ -17,9 +16,6 @@ module.exports = {
 			meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
 		})
 	],
-	optimization: {
-		minimizer: [new TerserPlugin()],
-	},
 	module: {
 		rules: [
 			{

@@ -11,7 +11,7 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._paddingModifier = 0.3;
 		this._lineWidth = this._qualityModifier * 1.5;
 		this._controlPosition = { start: .5, end: .7 };
-		this._controlFrameVerticalBorderWidth = .035;
+		this._controlFrameVerticalBorderWidth = .015;
 		this._controlFrameHorizontalBorderWidth = .05;
 		this._minFrameWidth = 0.15;
 	}
@@ -21,6 +21,7 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._controlLayer.addEventListener('mousedown', this._mouseDown.bind(this));
 		document.addEventListener('mouseup', this._mouseReleasedOverDocument.bind(this));
 		document.addEventListener('mousemove', this._mouseMoveOverDocument.bind(this));
+		document.addEventListener('contextmenu', this._mouseReleasedOverDocument.bind(this));
 	}
 
 	redraw() {
