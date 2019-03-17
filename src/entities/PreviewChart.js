@@ -1,4 +1,7 @@
 import HTMLElementEntity from '../sharedClasses/HTMLElementEntity';
+import createPreviewChartLine from '../initialize/createPreviewChartLine';
+import PreviewChartLine from './PreviewChartLine';
+import AppWrapper from '../singletons/AppWrapper';
 
 export default class PreviewChart extends HTMLElementEntity {
 
@@ -7,16 +10,16 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._parentGraph = parentGraph;
 		this._chartLayer = chartLayer;
 		this._controlLayer = controlLayer;
-		this._qualityModifier = 2;
-		this._paddingModifier = 0.3;
-		this._lineWidth = this._qualityModifier * 1.5;
+		this.PADDING_MODIFIER = 0.3;
 		this._controlPosition = { start: .5, end: .7 };
 		this._controlFrameVerticalBorderWidth = .015;
 		this._controlFrameHorizontalBorderWidth = .05;
 		this._minFrameWidth = 0.15;
+		this._chartLines = [];
 	}
 
 	_onInit() {
+		this._initCharts();
 		this.redraw();
 		this._controlLayer.addEventListener('mousedown', this._mouseDown.bind(this));
 		document.addEventListener('mouseup', this._mouseReleasedOverDocument.bind(this));
@@ -24,57 +27,38 @@ export default class PreviewChart extends HTMLElementEntity {
 		document.addEventListener('contextmenu', this._mouseReleasedOverDocument.bind(this));
 	}
 
+	_initCharts() {
+		const data = this.getData();
+		this._chartLines = data.columns
+			.filter(col => data.types[col[0]] === 'line')
+			.map((col) => {
+				const lineKey = col[0];
+				const lineValues = col.slice(1);
+				const lineColor = data.colors[lineKey];
+				const lineLayer = createPreviewChartLine(this._chartLayer);
+				return new PreviewChartLine(lineLayer, lineValues, lineKey, lineColor);
+			});
+		requestAnimationFrame(() => {
+			const min = Math.min(...this._chartLines.map(line => line.min));
+			const max = Math.max(...this._chartLines.map(line => line.max));
+			this._chartLines.forEach((line) => line.drawChart(min, max));
+		});
+	}
+
 	redraw() {
 		this._defineSize();
-		this._drawCharts();
 		this._drawControl();
 	}
 
-	_defineSize() {
-		this._chartLayer.width = this._chartLayer.offsetWidth * this._qualityModifier;
-		this._chartLayer.height = this._chartLayer.offsetHeight * this._qualityModifier;
-		this._controlLayer.height = this._controlLayer.offsetHeight * this._qualityModifier;
-		this._controlLayer.width = this._controlLayer.offsetWidth * this._qualityModifier;
+	redrawCharts() {
+
 	}
 
-	_drawCharts() {
-		const data = this.getData();
-		const columns = data.columns.filter(col => data.types[col[0]] === 'line');
-		let { min, max } = columns.map(col => col.slice(1)).flat().reduce((acc, val, idx) => {
-			return idx ? {
-				min: Math.min(acc.min, val),
-				max: Math.max(acc.max, val)
-			} : { min: val, max: val };
-		}, {});
-		let cordRange = max - min;
-		max += Math.abs(cordRange * this._paddingModifier);
-		min -= Math.abs(cordRange * this._paddingModifier);
-		cordRange = max - min;
-
-		const ctx = this._chartLayer.getContext('2d');
-		const layerHeight = this._chartLayer.height;
-		const layerWidth = this._chartLayer.width;
-
-
-		ctx.transform(1, 0, 0, -1, 0, layerHeight);
-		ctx.lineWidth = this._lineWidth;
-		ctx.lineJoin = 'round';
-
-		ctx.clearRect(0, 0, layerWidth, layerHeight);
-
-		columns.forEach(col => {
-			ctx.beginPath();
-			ctx.strokeStyle = data.colors[col[0]];
-			col.splice(1).forEach((value, idx, valuesArr) => {
-				const cordY = ((value - min) / cordRange) * layerHeight;
-				const cordX = (idx / (valuesArr.length - 1)) * layerWidth;
-				if (!idx) {
-					ctx.moveTo(cordX, cordY);
-				}
-				ctx.lineTo(cordX, cordY);
-			});
-			ctx.stroke();
-		});
+	_defineSize() {
+		this._chartLayer.width = this._chartLayer.offsetWidth * AppWrapper.QUALITY_MODIFIER;
+		this._chartLayer.height = this._chartLayer.offsetHeight * AppWrapper.QUALITY_MODIFIER;
+		this._controlLayer.height = this._controlLayer.offsetHeight * AppWrapper.QUALITY_MODIFIER;
+		this._controlLayer.width = this._controlLayer.offsetWidth * AppWrapper.QUALITY_MODIFIER;
 	}
 
 	_drawControl() {
@@ -82,7 +66,7 @@ export default class PreviewChart extends HTMLElementEntity {
 		const layerHeight = this._controlLayer.height;
 		const layerWidth = this._controlLayer.width;
 		ctx.clearRect(0, 0, layerWidth, layerHeight);
-		ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+		ctx.fillStyle = 'rgba(202, 234, 255, 0.2)';
 		ctx.fillRect(0, 0, layerWidth, layerHeight);
 
 		const startX = this._controlPosition.start * layerWidth;
@@ -124,7 +108,7 @@ export default class PreviewChart extends HTMLElementEntity {
 	}
 
 	_mouseDown(evt) {
-		const offset = evt.offsetX * this._qualityModifier / this._controlLayer.width;
+		const offset = evt.offsetX * AppWrapper.QUALITY_MODIFIER / this._controlLayer.width;
 		const { start, end } = this._controlPosition;
 		const leftBorder = {
 			start,
@@ -164,7 +148,7 @@ export default class PreviewChart extends HTMLElementEntity {
 	_mouseMoveOverDocument(evt) {
 
 		if (this._frameStickedToMouse || this._leftBorderStickedToMouse || this._rightBorderStickedToMouse) {
-			const offset = ((evt.clientX - this._controlLayer.getBoundingClientRect().left) * this._qualityModifier / this._controlLayer.width) - this._stickOffset;
+			const offset = ((evt.clientX - this._controlLayer.getBoundingClientRect().left) * AppWrapper.QUALITY_MODIFIER / this._controlLayer.width) - this._stickOffset;
 			if (this._frameStickedToMouse) {
 				this._moveControlPosition(offset);
 			} else if (this._leftBorderStickedToMouse) {
@@ -175,4 +159,20 @@ export default class PreviewChart extends HTMLElementEntity {
 		}
 	}
 
+	toggleLine(key, state) {
+		const activeLines = this._chartLines.filter(line => 
+			(line.key !== key && line.displayed) || (line.key === key && state)
+		);
+		const min = Math.min(...activeLines.map(line => line.min));
+		const max = Math.max(...activeLines.map(line => line.max));
+		const toggledLine = this._chartLines.find(line => line.key === key);
+		if (state) {
+			toggledLine.toggleLine(state, min, max);
+		} else {
+			toggledLine.toggleLine(state);
+		}
+		this._chartLines
+			.filter(line => line.key !== key && line.displayed)
+			.forEach(line => line.changeLimits(min, max));
+	}
 }

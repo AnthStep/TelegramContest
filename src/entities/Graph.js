@@ -31,8 +31,16 @@ export default class Graph extends HTMLElementEntity {
 				color: data.colors[lineKey]
 			};
 			const { htmlContainer, canvasLayer, effectCanvasLayer } = createToogglerElement(this._togglersContainer, togglerData.name);
-			return new ChartToggler(htmlContainer, canvasLayer, togglerData, effectCanvasLayer);
+			return new ChartToggler(htmlContainer, canvasLayer, togglerData, effectCanvasLayer, this);
 		});
+	}
+
+	getTogglersList() {
+		return this._togglersList;
+	}
+
+	chartToggled(key, state) {
+		this._previewChart.toggleLine(key, state);
 	}
 
 }
