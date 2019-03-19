@@ -9,6 +9,7 @@ class AppWrapper {
 		this._graphList = null;
 		this.QUALITY_MODIFIER = 2;
 		this.PREVIEW_PADDING_MODIFIER = 0.3;
+		this.MAIN_PADDING_MODIFIER = 0.1;
 	}
 
 	setElement(node) {

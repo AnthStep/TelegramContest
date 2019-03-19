@@ -3,7 +3,9 @@ import PreviewChart from './PreviewChart';
 import createPreviewChartLayers from '../initialize/createPreviewChartLayers';
 import createToogglersContainer from '../initialize/createTogglersContainer';
 import createToogglerElement from '../initialize/createTogglerElement';
+import createMainChartLayers from '../initialize/createMainChartLayers';
 import ChartToggler from './ChartToggler';
+import MainChart from './MainChart';
 
 export default class Graph extends HTMLElementEntity {
     
@@ -12,8 +14,14 @@ export default class Graph extends HTMLElementEntity {
 	}
 
 	_onInit() {
+		this._mainChartWrapperInit();
 		this._previewControlInit();
 		this._togglersControlsInit();
+	}
+
+	_mainChartWrapperInit() {
+		const {xAxisLayer, yAxisLayer, linesContainer} = createMainChartLayers(this.getHTMLElement());
+		this._mainChart = new MainChart(linesContainer, this.getData());
 	}
     
 	_previewControlInit() {
@@ -41,6 +49,10 @@ export default class Graph extends HTMLElementEntity {
 
 	chartToggled(key, state) {
 		this._previewChart.toggleLine(key, state);
+	}
+
+	getControlPostion() {
+		this._previewChart.controlPosition;
 	}
 
 }

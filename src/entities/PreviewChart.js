@@ -1,5 +1,5 @@
 import HTMLElementEntity from '../sharedClasses/HTMLElementEntity';
-import createPreviewChartLine from '../initialize/createPreviewChartLine';
+import createPreviewChartLine from '../initialize/createChartLine';
 import PreviewChartLine from './PreviewChartLine';
 import AppWrapper from '../singletons/AppWrapper';
 
@@ -11,7 +11,7 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._chartLayer = chartLayer;
 		this._controlLayer = controlLayer;
 		this.PADDING_MODIFIER = 0.3;
-		this._controlPosition = { start: .5, end: .7 };
+		this.controlPosition = { start: .5, end: .7 };
 		this._controlFrameVerticalBorderWidth = .015;
 		this._controlFrameHorizontalBorderWidth = .05;
 		this._minFrameWidth = 0.15;
@@ -66,7 +66,7 @@ export default class PreviewChart extends HTMLElementEntity {
 		const layerHeight = this._controlLayer.height;
 		const layerWidth = this._controlLayer.width;
 		ctx.clearRect(0, 0, layerWidth, layerHeight);
-		ctx.fillStyle = 'rgba(202, 234, 255, 0.2)';
+		ctx.fillStyle = 'rgba(246, 249, 255, 0.8)';
 		ctx.fillRect(0, 0, layerWidth, layerHeight);
 
 		const startX = this._controlPosition.start * layerWidth;
