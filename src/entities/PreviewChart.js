@@ -14,7 +14,7 @@ export default class PreviewChart extends HTMLElementEntity {
 		this.controlPosition = { start: .5, end: .7 };
 		this._controlFrameVerticalBorderWidth = .015;
 		this._controlFrameHorizontalBorderWidth = .05;
-		this._minFrameWidth = 0.15;
+		this._minFrameWidth = 0.1;
 		this._chartLines = [];
 	}
 
@@ -48,10 +48,9 @@ export default class PreviewChart extends HTMLElementEntity {
 	redraw() {
 		this._defineSize();
 		this._drawControl();
-	}
-
-	redrawCharts() {
-
+		if (this.onControlChange) {
+			this.onControlChange();
+		}
 	}
 
 	_defineSize() {
@@ -69,8 +68,8 @@ export default class PreviewChart extends HTMLElementEntity {
 		ctx.fillStyle = 'rgba(246, 249, 255, 0.8)';
 		ctx.fillRect(0, 0, layerWidth, layerHeight);
 
-		const startX = this._controlPosition.start * layerWidth;
-		const endX = this._controlPosition.end * layerWidth;
+		const startX = this.controlPosition.start * layerWidth;
+		const endX = this.controlPosition.end * layerWidth;
 		const controlWidth = endX - startX;
 		ctx.fillStyle = 'rgba(10, 10, 255, 0.1)';
 		ctx.fillRect(startX, 0, controlWidth, layerHeight);
@@ -83,33 +82,42 @@ export default class PreviewChart extends HTMLElementEntity {
 	}
 
 	_moveControlPosition(offset) {
-		const { start, end } = this._controlPosition;
+		const { start, end } = this.controlPosition;
 		const controlFrameWidth = end - start;
 		const normalizedOffset = Math.max(Math.min(offset, 1 - controlFrameWidth / 2), controlFrameWidth / 2);
-		this._controlPosition = {
+		this.controlPosition = {
 			start: Math.max(normalizedOffset - controlFrameWidth / 2),
 			end: Math.max(normalizedOffset + controlFrameWidth / 2)
 		};
 		this._drawControl();
+		if (this.onControlChange) {
+			this.onControlChange();
+		}
 	}
 
 	_moveLeftBorder(offset) {
-		const { end } = this._controlPosition;
+		const { end } = this.controlPosition;
 		const normalizedStart = Math.max(Math.min(offset, end - this._minFrameWidth), 0);
-		this._controlPosition.start = normalizedStart;
+		this.controlPosition.start = normalizedStart;
 		this._drawControl();
+		if (this.onControlChange) {
+			this.onControlChange();
+		}
 	}
 
 	_moveRightBorder(offset) {
-		const { start } = this._controlPosition;
+		const { start } = this.controlPosition;
 		const normalizedStart = Math.max(Math.min(offset, 1), start + this._minFrameWidth);
-		this._controlPosition.end = normalizedStart;
+		this.controlPosition.end = normalizedStart;
 		this._drawControl();
+		if (this.onControlChange) {
+			this.onControlChange();
+		}
 	}
 
 	_mouseDown(evt) {
 		const offset = evt.offsetX * AppWrapper.QUALITY_MODIFIER / this._controlLayer.width;
-		const { start, end } = this._controlPosition;
+		const { start, end } = this.controlPosition;
 		const leftBorder = {
 			start,
 			end: start + this._controlFrameVerticalBorderWidth
@@ -127,7 +135,7 @@ export default class PreviewChart extends HTMLElementEntity {
 			this._stickOffset = offset - rightBorder.end;
 		} else {
 			this._frameStickedToMouse = true;
-			if (offset >= this._controlPosition.start && offset <= this._controlPosition.end) {
+			if (offset >= this.controlPosition.start && offset <= this.controlPosition.end) {
 				this._stickOffset = offset - (end + start) / 2;
 			} else {
 				this._stickOffset = 0;

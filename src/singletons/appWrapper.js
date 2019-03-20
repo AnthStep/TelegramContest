@@ -10,6 +10,7 @@ class AppWrapper {
 		this.QUALITY_MODIFIER = 2;
 		this.PREVIEW_PADDING_MODIFIER = 0.3;
 		this.MAIN_PADDING_MODIFIER = 0.1;
+		this.TICKS_COUNT = 5;
 	}
 
 	setElement(node) {
