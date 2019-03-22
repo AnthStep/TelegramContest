@@ -34,6 +34,7 @@ export default class MainChart extends HTMLElementEntity {
 		this._prevMin = Math.min(...this._chartLines.map(line => line.getLimits(start, end).min));
 		this._prevMax = Math.max(...this._chartLines.map(line => line.getLimits(start, end).max));
 		this._chartLines.forEach((line) => line.drawChart(this._prevMin, this._prevMax, 1, start, end));
+		if (this.limitsUpdated) this.limitsUpdated(this._prevMin, this._prevMax);
 	}
 
 	frameChanged() {
@@ -58,6 +59,7 @@ export default class MainChart extends HTMLElementEntity {
 					line.updateLimits(this._prevMin, this._prevMax);
 					line.redraw();
 				});
+				if (this.limitsUpdated) this.limitsUpdated(this._prevMin, this._prevMax);
 			}, 50);
 		}
 	}
@@ -72,6 +74,7 @@ export default class MainChart extends HTMLElementEntity {
 		this._chartLines.forEach((line) => {
 			line.updateLimits(this._prevMin, this._prevMax);
 			line.redraw();
+			if (this.limitsUpdated) this.limitsUpdated(this._prevMin, this._prevMax);
 		});
 	}
 

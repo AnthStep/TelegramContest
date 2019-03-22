@@ -7,6 +7,7 @@ import createMainChartLayers from '../initialize/createMainChartLayers';
 import ChartToggler from './ChartToggler';
 import MainChart from './MainChart';
 import xAxis from './XAxis';
+import yAxis from './YAxis';
 
 export default class Graph extends HTMLElementEntity {
     
@@ -26,6 +27,10 @@ export default class Graph extends HTMLElementEntity {
 		this._mainChart = new MainChart(linesContainer, this.getData(), this);
 		const xAxisData = data.columns.find(col =>  data.types[col[0]] === 'x').slice(1);
 		this._xAxis = new xAxis(xAxisLayer, xAxisData, this);
+		this._yAxis = new yAxis(yAxisLayer, null, this);
+		this._mainChart.limitsUpdated = (min, max) => {
+			this._yAxis.updateLimits(min, max);
+		};
 	}
     
 	_previewControlInit() {

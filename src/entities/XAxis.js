@@ -49,7 +49,7 @@ export default class xAxis extends HTMLElementEntity {
 			if (isTransitionAnimation && (cursor/minStep)%2 === 1) {
 				ctx.globalAlpha = transitionAlpha;
 			}
-			ctx.fillText(tickText, positionCursor, 10);
+			ctx.fillText(tickText, positionCursor, 20);
 			ctx.globalAlpha = 1;
 		}
 	}
