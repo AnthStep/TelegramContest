@@ -47,10 +47,9 @@ export default class MainChartLine extends HTMLElementEntity {
 		const minStep = 1/(data.length - 1);
 		const renderStart = start - start%minStep;
 		const renderEnd = end - end%minStep + 2*minStep;
+		min = Math.max(min - Math.abs((max - min) * AppWrapper.MAIN_PADDING_MODIFIER), 0);
+		max += Math.abs((max - min) * AppWrapper.MAIN_PADDING_MODIFIER);
 		let cordRange = max - min;
-		max += Math.abs(cordRange * AppWrapper.MAIN_PADDING_MODIFIER);
-		min -= Math.abs(cordRange * AppWrapper.MAIN_PADDING_MODIFIER);
-		cordRange = max - min;
 
 		ctx.beginPath();
 		ctx.resetTransform();
@@ -113,7 +112,7 @@ export default class MainChartLine extends HTMLElementEntity {
 		const minDiff = this._newMin - this._lastMin;
 		const maxDiff = this._newMax - this._lastMax;
 		const opacityDiff = this._newOpacity - this._lastOpacity;
-		const endFrame = 10;
+		const endFrame = 15;
 		const drawFrame = (frameNo = 1) => {
 			const progress = 1 - (frameNo / endFrame);
 			const min = this._newMin - minDiff * progress;

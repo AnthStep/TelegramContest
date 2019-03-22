@@ -60,7 +60,7 @@ export default class MainChart extends HTMLElementEntity {
 					line.redraw();
 				});
 				if (this.limitsUpdated) this.limitsUpdated(this._prevMin, this._prevMax);
-			}, 50);
+			}, 200);
 		}
 	}
 

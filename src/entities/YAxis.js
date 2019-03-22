@@ -16,8 +16,9 @@ export default class yAxis extends HTMLElementEntity {
 	}
 
 	updateLimits(min, max) {
-		min *= (1 - AppWrapper.MAIN_PADDING_MODIFIER);
-		max *= (1 + AppWrapper.MAIN_PADDING_MODIFIER);
+		min = Math.max(min - Math.abs((max - min) * AppWrapper.MAIN_PADDING_MODIFIER), 0);
+		max += Math.abs((max - min) * AppWrapper.MAIN_PADDING_MODIFIER);
+
 		const axisConf = { min, max, opacity: 0, active: true};
 		if (!this.axisesArr.length) {
 			axisConf.opacity = 1;
@@ -52,16 +53,16 @@ export default class yAxis extends HTMLElementEntity {
 		const activeAxis = this.axisesArr.find(axis => axis.active);
 		const diffMin = activeAxis.min - this._prevMin;
 		const diffMax = activeAxis.max - this._prevMax;
-		const endFrameNo = 10;
+		const endFrameNo = 15;
 		const drawFrame = (frameNo = 1) => {
 			this._prevMin += diffMin/endFrameNo;
 			this._prevMax += diffMax/endFrameNo;
 			this._clearCanvas();
 			this.axisesArr = this.axisesArr.filter((axis) => {
 				if (axis.active && axis.opacity < 1) {
-					axis.opacity = Math.min(axis.opacity + 0.1, 1);
+					axis.opacity = Math.min(axis.opacity + 1/endFrameNo, 1);
 				} else if (!axis.active) {
-					axis.opacity = Math.max(axis.opacity - 0.1, 0);
+					axis.opacity = Math.max(axis.opacity - 1/endFrameNo, 0);
 				}
 				
 				if (axis.opacity > 0) {
@@ -79,20 +80,22 @@ export default class yAxis extends HTMLElementEntity {
 	}
 
 	_drawAxis({min, max, opacity}) {
+		const renderMin = this._prevMin;
+		const renderMax = this._prevMax;
 		const ctx = this.getHTMLElement().getContext('2d');
+		max -= (max-min) * (0.2);
 		const axisFrameHeight = max - min;
-		const minStep = axisFrameHeight / 6;
-		const renderStart = this._prevMin;
-		const renderEnd = this._prevMax;
-		const renderFrameHeight = renderEnd - renderStart;
+		const minStep = axisFrameHeight / 5;
+		const renderFrameHeight = renderMax - renderMin;
 		const {height, width} = this.getHTMLElement();
-		for (let pos = min+1; pos < max; pos+=minStep) {
-			if (pos >= renderStart && pos < (renderEnd - minStep/2)) {
+		const epsilon = 10**(-3);
+		for (let pos = min; pos <= (max + epsilon); pos+=minStep) {
+			if (pos >= (renderMin - epsilon) && pos < (renderMax + epsilon)) {
 				ctx.globalAlpha = opacity;
-				const canvasPosition = height - height * ((pos - renderStart) / renderFrameHeight);
+				const canvasPosition = height * (1 - ((pos - renderMin) / renderFrameHeight));
 				ctx.beginPath();
-				ctx.moveTo(0, canvasPosition);
-				ctx.lineTo(width, canvasPosition);
+				ctx.moveTo(0, canvasPosition - 1);
+				ctx.lineTo(width, canvasPosition - 1);
 				ctx.stroke();
 				ctx.fillText(this._getValue(pos), 0, canvasPosition - 10);
 			}

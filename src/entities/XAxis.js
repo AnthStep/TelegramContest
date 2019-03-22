@@ -2,12 +2,12 @@ import HTMLElementEntity from '../sharedClasses/HTMLElementEntity';
 import Graph from './Graph';
 
 export default class xAxis extends HTMLElementEntity {
-	constructor (container, data, parentGraph = new Graph()) {
+	constructor(container, data, parentGraph = new Graph()) {
 		super(container, data);
 		this._parentGraph = parentGraph;
 		this._setSizings();
 		this._precisionDenominator = Math.log(2);
-		this._precisionBarier = Math.log(4/3) / this._precisionDenominator;
+		this._precisionBarier = Math.log(4 / 3) / this._precisionDenominator;
 		this._textMap = {};
 	}
 
@@ -19,20 +19,20 @@ export default class xAxis extends HTMLElementEntity {
 
 	updateControlPosition() {
 		const ctx = this.getHTMLElement().getContext('2d');
-		const {width, height} = this.getHTMLElement();
-		const {start, end} = this._parentGraph.getControlPostion();
+		const { width, height } = this.getHTMLElement();
+		const { start, end } = this._parentGraph.getControlPostion();
 		const data = this.getData();
 		const frameWidth = end - start;
-		const {maxPrecision, diff} = this._getPrecision(frameWidth);
-		const minStep = 1/(2**maxPrecision);
-		const renderStart = start - start%minStep - minStep;
-		const renderEnd = end - end%minStep + 2*minStep;
+		const { maxPrecision, diff } = this._getPrecision(frameWidth);
+		const minStep = 1 / (2 ** maxPrecision);
+		const renderStart = start - start % minStep - minStep;
+		const renderEnd = end - end % minStep + 2 * minStep;
 		const trMod = 0.5;
 		const isTransitionAnimation = diff > this._precisionBarier && diff < this._precisionBarier * (1 + trMod);
-		const transitionAlpha = (diff - this._precisionBarier)/ (this._precisionBarier * trMod);
+		const transitionAlpha = (diff - this._precisionBarier) / (this._precisionBarier * trMod);
 
 
-		ctx.clearRect(0,0, width, height);
+		ctx.clearRect(0, 0, width, height);
 		ctx.font = '12px Arial';
 		for (let cursor = renderStart; cursor <= renderEnd; cursor += minStep) {
 			const dataIndex = Math.floor(data.length * cursor);
@@ -40,13 +40,13 @@ export default class xAxis extends HTMLElementEntity {
 			const tickText = this._getText(dataValue);
 			const positionCursor = ((cursor - start) / frameWidth) * width;
 			if (cursor === 0) {
-				ctx.textAlign = 'start';	
+				ctx.textAlign = 'start';
 			} else if (cursor === 1) {
 				ctx.textAlign = 'end';
 			} else {
 				ctx.textAlign = 'center';
 			}
-			if (isTransitionAnimation && (cursor/minStep)%2 === 1) {
+			if (isTransitionAnimation && (cursor / minStep) % 2 === 1) {
 				ctx.globalAlpha = transitionAlpha;
 			}
 			ctx.fillText(tickText, positionCursor, 20);
@@ -55,7 +55,7 @@ export default class xAxis extends HTMLElementEntity {
 	}
 
 	_getPrecision(width = 3) {
-		const precision = Math.log(4/width) / this._precisionDenominator;
+		const precision = Math.log(4 / width) / this._precisionDenominator;
 		const lessInteger = Math.floor(precision);
 		const diff = precision - lessInteger;
 		return {
@@ -68,10 +68,11 @@ export default class xAxis extends HTMLElementEntity {
 		if (this._textMap[v]) {
 			return this._textMap[v];
 		} else {
+			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 			const date = new Date(v);
-			const text = date.toLocaleString('en-us', { month: 'short', day: 'numeric' });
+			const text = monthNames[date.getMonth()] + ' ' + date.getDate();
 			this._textMap[v] = text;
-			return text;	
+			return text;
 		}
 	}
 }
