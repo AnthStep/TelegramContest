@@ -89,7 +89,7 @@ export default class PreviewChartLine extends HTMLElementEntity {
 	_runChangeLimitsAnimation(min, max) {
 		const diffMin = min - this._lastMin;
 		const diffMax = max - this._lastMax;
-		const frameCount = 10;
+		const frameCount = 15;
 		const drawFrame = (frame = 1) => {
 			const progress = frame / frameCount;
 			const animateMin = min - diffMin * (1 - progress);

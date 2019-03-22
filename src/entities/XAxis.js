@@ -34,6 +34,7 @@ export default class xAxis extends HTMLElementEntity {
 
 		ctx.clearRect(0, 0, width, height);
 		ctx.font = '12px Arial';
+		ctx.fillStyle = '#98a2a9';
 		for (let cursor = renderStart; cursor <= renderEnd; cursor += minStep) {
 			const dataIndex = Math.floor(data.length * cursor);
 			const dataValue = data[dataIndex];
