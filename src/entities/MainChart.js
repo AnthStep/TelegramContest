@@ -7,6 +7,7 @@ export default class MainChart extends HTMLElementEntity {
 	constructor (container, data, mainGraph) {
 		super(container, data);
 		this._mainGraph = mainGraph;
+		this._firstDraw = true;
 	}
 
 	_onInit() {
@@ -26,11 +27,52 @@ export default class MainChart extends HTMLElementEntity {
 			});
 	}
 
-	drawLines() {
+	_initDraw() {
 		const {start, end} = this._mainGraph.getControlPostion();
-		const min = Math.min(...this._chartLines.map(line => line.min));
-		const max = Math.max(...this._chartLines.map(line => line.max));
-		this._chartLines.forEach((line) => line.drawChart(min, max, 1, start, end));
+		this._prevStart = start;
+		this._prevEnd = end;
+		this._prevMin = Math.min(...this._chartLines.map(line => line.getLimits(start, end).min));
+		this._prevMax = Math.max(...this._chartLines.map(line => line.getLimits(start, end).max));
+		this._chartLines.forEach((line) => line.drawChart(this._prevMin, this._prevMax, 1, start, end));
+	}
+
+	frameChanged() {
+		if (this._firstDraw) {
+			this._firstDraw = false;
+			this._initDraw();
+			return;
+		}
+		const {start, end} = this._mainGraph.getControlPostion();
+		this._chartLines.forEach((line) => line.updatePosition(start, end));
+		const enabledLines = this._chartLines.filter(line => line.enabled);
+		const newMin = Math.min(...enabledLines.map(line => line.getLimits(start, end).min));
+		const newMax = Math.max(...enabledLines.map(line => line.getLimits(start, end).max));
+		if ((newMin !== this._prevMin) || (newMax !== this._prevMax)) {
+			if (this._changeLimitTimeout) {
+				clearTimeout(this._changeLimitTimeout);
+			}
+			this._prevMin = newMin;
+			this._prevMax = newMax;
+			this._changeLimitTimeout = setTimeout(() => {
+				this._chartLines.forEach((line) => {
+					line.updateLimits(this._prevMin, this._prevMax);
+					line.redraw();
+				});
+			}, 50);
+		}
+	}
+
+	toggleLine(key, state) {
+		const {start, end} = this._mainGraph.getControlPostion();
+		const toggledLine = this._chartLines.find(line => line.key === key);
+		state ? toggledLine.showLine() : toggledLine.hideLine();
+		const enabledLines = this._chartLines.filter(line => line.enabled);
+		this._prevMin = Math.min(...enabledLines.map(line => line.getLimits(start, end).min));
+		this._prevMax = Math.max(...enabledLines.map(line => line.getLimits(start, end).max));
+		this._chartLines.forEach((line) => {
+			line.updateLimits(this._prevMin, this._prevMax);
+			line.redraw();
+		});
 	}
 
 }

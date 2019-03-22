@@ -33,7 +33,7 @@ export default class Graph extends HTMLElementEntity {
 		this._previewChart = new PreviewChart(previewContainer, chartLayer, controlLayer, this.getData(), this);
 		this._previewChart.onControlChange = () => {
 			this._xAxis.updateControlPosition();
-			this._mainChart.drawLines();
+			this._mainChart.frameChanged();
 		};
 	}
 
@@ -57,6 +57,7 @@ export default class Graph extends HTMLElementEntity {
 
 	chartToggled(key, state) {
 		this._previewChart.toggleLine(key, state);
+		this._mainChart.toggleLine(key, state);
 	}
 
 	getControlPostion() {
