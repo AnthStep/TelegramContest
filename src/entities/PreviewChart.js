@@ -16,9 +16,6 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._controlFrameHorizontalBorderWidth = .05;
 		this._minFrameWidth = 0.1;
 		this._chartLines = [];
-	}
-
-	_onInit() {
 		this._initCharts();
 		this.redraw();
 		this._controlLayer.addEventListener('mousedown', this._mouseDown.bind(this));
@@ -38,11 +35,9 @@ export default class PreviewChart extends HTMLElementEntity {
 				const lineLayer = createPreviewChartLine(this._chartLayer);
 				return new PreviewChartLine(lineLayer, lineValues, lineKey, lineColor);
 			});
-		requestAnimationFrame(() => {
-			const min = Math.min(...this._chartLines.map(line => line.min));
-			const max = Math.max(...this._chartLines.map(line => line.max));
-			this._chartLines.forEach((line) => line.drawChart(min, max));
-		});
+		const min = Math.min(...this._chartLines.map(line => line.min));
+		const max = Math.max(...this._chartLines.map(line => line.max));
+		this._chartLines.forEach((line) => line.drawChart(min, max));
 	}
 
 	redraw() {

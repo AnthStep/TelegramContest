@@ -9,10 +9,6 @@ export default class PreviewChartLine extends HTMLElementEntity {
 		this._color = color;
 		this.displayed = true;
 		this._togglingAnimationInProcess = false;
-	}
-
-	_onInit() {
-		const data = this.getData();
 		this.min = Math.min(...data);
 		this.max = Math.max(...data);
 		this.getHTMLElement().width = this.getHTMLElement().offsetWidth * AppWrapper.QUALITY_MODIFIER;

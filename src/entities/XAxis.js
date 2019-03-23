@@ -65,15 +65,37 @@ export default class xAxis extends HTMLElementEntity {
 		};
 	}
 
-	_getText(v = 0) {
-		if (this._textMap[v]) {
+	_getText(v = 0, withDay = false) {
+		if (this._textMap[v] && !withDay) {
 			return this._textMap[v];
 		} else {
 			const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 			const date = new Date(v);
-			const text = monthNames[date.getMonth()] + ' ' + date.getDate();
+			let text = monthNames[date.getMonth()] + ' ' + date.getDate();
 			this._textMap[v] = text;
+			if (withDay) {
+				const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+				text = days[date.getDay()] + ', ' + text;
+			}
 			return text;
 		}
+	}
+
+	getLabel(position) {
+		const {start, end} = this._parentGraph.getControlPostion();
+		const data = this.getData();
+		const dLength = data.length  - 1;
+		const minStep = 1/dLength;
+		const minIdx = Math.round((start + (start%minStep && (minStep - start%minStep))) * dLength);
+		const maxIdx = Math.round((end - end%minStep) * dLength);
+		let positionIdx = Math.round(position * dLength);
+		positionIdx = Math.min(Math.max(positionIdx, minIdx), maxIdx);
+		const layerPosition = ((positionIdx * minStep) - start) / (end - start);
+		return {
+			value: data[positionIdx],
+			text: this._getText(data[positionIdx], true),
+			layerPosition,
+			idx: positionIdx
+		};
 	}
 }

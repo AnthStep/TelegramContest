@@ -8,14 +8,12 @@ import ChartToggler from './ChartToggler';
 import MainChart from './MainChart';
 import xAxis from './XAxis';
 import yAxis from './YAxis';
+import ValueSelector from './ValueSelector';
 
 export default class Graph extends HTMLElementEntity {
     
 	constructor (container, data) {
 		super(container, data);
-	}
-
-	_onInit() {
 		this._mainChartWrapperInit();
 		this._previewControlInit();
 		this._togglersControlsInit();
@@ -23,11 +21,12 @@ export default class Graph extends HTMLElementEntity {
 
 	_mainChartWrapperInit() {
 		const data = this.getData();
-		const {xAxisLayer, yAxisLayer, linesContainer} = createMainChartLayers(this.getHTMLElement());
+		const {xAxisLayer, yAxisLayer, linesContainer, selectorLayer, selectorDescriptionLayer, selectorDetectionLayer} = createMainChartLayers(this.getHTMLElement());
 		this._mainChart = new MainChart(linesContainer, this.getData(), this);
 		const xAxisData = data.columns.find(col =>  data.types[col[0]] === 'x').slice(1);
-		this._xAxis = new xAxis(xAxisLayer, xAxisData, this);
+		this.xAxis = new xAxis(xAxisLayer, xAxisData, this);
 		this._yAxis = new yAxis(yAxisLayer, null, this);
+		this._selectorLayer = new ValueSelector(selectorLayer, this.getData(), this, selectorDescriptionLayer, selectorDetectionLayer);
 		this._mainChart.limitsUpdated = (min, max) => {
 			this._yAxis.updateLimits(min, max);
 		};
@@ -37,9 +36,10 @@ export default class Graph extends HTMLElementEntity {
 		const {previewContainer, chartLayer, controlLayer} = createPreviewChartLayers(this.getHTMLElement());	
 		this._previewChart = new PreviewChart(previewContainer, chartLayer, controlLayer, this.getData(), this);
 		this._previewChart.onControlChange = () => {
-			this._xAxis.updateControlPosition();
+			this.xAxis.updateControlPosition();
 			this._mainChart.frameChanged();
 		};
+		this._previewChart.onControlChange();
 	}
 
 	_togglersControlsInit() {

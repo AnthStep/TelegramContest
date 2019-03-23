@@ -16,10 +16,6 @@ export default class MainChartLine extends HTMLElementEntity {
 		this.getHTMLElement().height = this.getHTMLElement().offsetHeight * AppWrapper.QUALITY_MODIFIER;
 	}
 
-	_onInit() {
-		
-	}
-
 	getLimits(start, end) {
 		const data = this.getData();
 		const minStep = 1/(data.length - 1);
@@ -112,7 +108,7 @@ export default class MainChartLine extends HTMLElementEntity {
 		const minDiff = this._newMin - this._lastMin;
 		const maxDiff = this._newMax - this._lastMax;
 		const opacityDiff = this._newOpacity - this._lastOpacity;
-		const endFrame = 15;
+		const endFrame = 10;
 		const drawFrame = (frameNo = 1) => {
 			const progress = 1 - (frameNo / endFrame);
 			const min = this._newMin - minDiff * progress;
@@ -128,6 +124,19 @@ export default class MainChartLine extends HTMLElementEntity {
 			});
 		};
 		drawFrame();
+	}
+
+	getValueByIndex(index) {
+		let [min, max] = [this._lastMin, this._lastMax];
+		const data = this.getData();
+		const value = data[index];
+		min = Math.max(min - Math.abs((max - min) * AppWrapper.MAIN_PADDING_MODIFIER), 0);
+		max += Math.abs((max - min) * AppWrapper.MAIN_PADDING_MODIFIER);
+		return {
+			key: this.key,
+			value,
+			layerPosition: (value - min) / (max - min) 
+		};
 	}
 
 }

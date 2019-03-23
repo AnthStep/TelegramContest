@@ -10,14 +10,10 @@ export default class ChartToggler extends HTMLElementEntity {
 		this._toggled = true;
 		this._animationInProgress = false;
 		this._parentGraph = parentGraph;
-	}
-
-	_onInit() {
 		this._canvasLayer.height = this._canvasLayer.offsetHeight * AppWrapper.QUALITY_MODIFIER;
 		this._canvasLayer.width = this._canvasLayer.offsetWidth * AppWrapper.QUALITY_MODIFIER;
 		this._effectCanvasLayer.height = this._effectCanvasLayer.offsetHeight * AppWrapper.QUALITY_MODIFIER;
 		this._effectCanvasLayer.width = this._effectCanvasLayer.offsetWidth * AppWrapper.QUALITY_MODIFIER;
-
 		this._drawCheckBox(1);
 		this.getHTMLElement().addEventListener('mousedown', this._toggleClick.bind(this));
 	}

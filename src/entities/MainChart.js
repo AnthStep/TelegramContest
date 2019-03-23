@@ -8,9 +8,6 @@ export default class MainChart extends HTMLElementEntity {
 		super(container, data);
 		this._mainGraph = mainGraph;
 		this._firstDraw = true;
-	}
-
-	_onInit() {
 		this._initCharts();
 	}
 
@@ -60,7 +57,7 @@ export default class MainChart extends HTMLElementEntity {
 					line.redraw();
 				});
 				if (this.limitsUpdated) this.limitsUpdated(this._prevMin, this._prevMax);
-			}, 200);
+			}, 50);
 		}
 	}
 
@@ -76,6 +73,10 @@ export default class MainChart extends HTMLElementEntity {
 			line.redraw();
 			if (this.limitsUpdated) this.limitsUpdated(this._prevMin, this._prevMax);
 		});
+	}
+
+	getActiveLineValuesByIndex(index) {
+		return this._chartLines.filter(line => line.enabled).map(line => line.getValueByIndex(index));
 	}
 
 }
