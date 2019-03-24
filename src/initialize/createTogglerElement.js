@@ -18,6 +18,7 @@ export default function (togglersContainer, text) {
 		align-items: center;
 		box-sizing: border-box; 
 		margin-right: 15px;
+		margin-bottom: 4px;
 		color: ${AppWrapper.colors.lineToggler.textColor}; 
 		font-family: sans-serif; 
 		overflow: hidden; 
