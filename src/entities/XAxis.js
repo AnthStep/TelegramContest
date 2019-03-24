@@ -37,7 +37,7 @@ export default class xAxis extends HTMLElementEntity {
 		ctx.font = '24px Arial';
 		ctx.fillStyle = AppWrapper.colors.axis.text;
 		for (let cursor = renderStart; cursor <= renderEnd; cursor += minStep) {
-			const dataIndex = Math.floor((data.length - 1) * cursor);
+			const dataIndex = Math.round((data.length - 1) * cursor);
 			const dataValue = data[dataIndex];
 			const tickText = this._getText(dataValue);
 			const positionCursor = ((cursor - start) / frameWidth) * width;
