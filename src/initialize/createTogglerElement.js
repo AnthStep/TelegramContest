@@ -1,7 +1,7 @@
 import AppWrapper from '../singletons/AppWrapper';
 
 export default function (togglersContainer, text) {
-	const htmlContainer = document.createElement('div');
+	const htmlContainer = document.createElement('button');
 	htmlContainer
 		.style
 		.cssText = `
@@ -22,6 +22,10 @@ export default function (togglersContainer, text) {
 		font-family: sans-serif; 
 		overflow: hidden; 
 		font-weight: 400;
+		border: none;
+		outline: none;
+		background: none;
+		font-size: 16px;
 		-webkit-box-shadow: inset 0px 0px 0px 1px ${AppWrapper.colors.lineToggler.borderColor};`;
 	htmlContainer.innerText = text;
 	const canvasLayer = document.createElement('canvas');
