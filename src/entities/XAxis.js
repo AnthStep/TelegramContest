@@ -14,8 +14,8 @@ export default class xAxis extends HTMLElementEntity {
 
 	_setSizings() {
 		const container = this.getHTMLElement();
-		container.height = container.offsetHeight;
-		container.width = container.offsetWidth;
+		container.height = container.offsetHeight * AppWrapper.QUALITY_MODIFIER;
+		container.width = container.offsetWidth * AppWrapper.QUALITY_MODIFIER;
 	}
 
 	updateControlPosition() {
@@ -34,7 +34,7 @@ export default class xAxis extends HTMLElementEntity {
 
 
 		ctx.clearRect(0, 0, width, height);
-		ctx.font = '12px Arial';
+		ctx.font = '24px Arial';
 		ctx.fillStyle = AppWrapper.colors.axis.text;
 		for (let cursor = renderStart; cursor <= renderEnd; cursor += minStep) {
 			const dataIndex = Math.floor(data.length * cursor);
@@ -51,7 +51,7 @@ export default class xAxis extends HTMLElementEntity {
 			if (isTransitionAnimation && (cursor / minStep) % 2 === 1) {
 				ctx.globalAlpha = transitionAlpha;
 			}
-			ctx.fillText(tickText, positionCursor, 20);
+			ctx.fillText(tickText, positionCursor, 30);
 			ctx.globalAlpha = 1;
 		}
 	}

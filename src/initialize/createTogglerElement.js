@@ -9,6 +9,7 @@ export default function (togglersContainer, text) {
 		user-select: none; 
 		-webkit-user-select: none; 
 		-webkit-mask-image: -webkit-radial-gradient(white, black);
+		-webkit-tap-highlight-color: transparent;
 		height: 45px;
 		padding: 10px 15px 10px 50px; 
 		border-radius: 22.5px; 
