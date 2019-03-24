@@ -144,13 +144,13 @@ export default class PreviewChart extends HTMLElementEntity {
 		};
 		let comfortDistanse = 0;
 		if (this._touched) {
-			comfortDistanse = this._controlFrameVerticalBorderWidth * 6;
+			comfortDistanse = this._controlFrameVerticalBorderWidth * 2;
 		}
 
-		if (offset <= (leftBorder.end) && offset >= (leftBorder.start - comfortDistanse)) {
+		if (offset <= (leftBorder.end + comfortDistanse) && offset >= (leftBorder.start - (comfortDistanse*3))) {
 			this._leftBorderStickedToMouse = true;
 			this._stickOffset = offset - leftBorder.start;
-		} else if (offset <= (rightBorder.end + comfortDistanse) && offset >= (rightBorder.start )) {
+		} else if (offset <= (rightBorder.end + (comfortDistanse*3)) && offset >= (rightBorder.start - comfortDistanse )) {
 			this._rightBorderStickedToMouse = true;
 			this._stickOffset = offset - rightBorder.end;
 		} else {
