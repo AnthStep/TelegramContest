@@ -134,6 +134,7 @@ export default class PreviewChart extends HTMLElementEntity {
 	_mouseDown({offsetX}) {
 		const offset = offsetX * AppWrapper.QUALITY_MODIFIER / this._controlLayer.width;
 		const { start, end } = this.controlPosition;
+		const frameWidth = end - start;
 		const leftBorder = {
 			start,
 			end: start + this._controlFrameVerticalBorderWidth
@@ -142,15 +143,17 @@ export default class PreviewChart extends HTMLElementEntity {
 			start: end - this._controlFrameVerticalBorderWidth,
 			end
 		};
-		let comfortDistanse = 0;
+		let comfortDistanseOut = 0;
+		let comfortDistanceIn = 0;
 		if (this._touched) {
-			comfortDistanse = this._controlFrameVerticalBorderWidth * 2;
+			comfortDistanseOut = this._controlFrameVerticalBorderWidth * 6;
+			comfortDistanceIn = frameWidth * 0.2;
 		}
 
-		if (offset <= (leftBorder.end + comfortDistanse) && offset >= (leftBorder.start - (comfortDistanse*3))) {
+		if (offset <= (leftBorder.end + comfortDistanceIn) && offset >= (leftBorder.start - (comfortDistanseOut))) {
 			this._leftBorderStickedToMouse = true;
 			this._stickOffset = offset - leftBorder.start;
-		} else if (offset <= (rightBorder.end + (comfortDistanse*3)) && offset >= (rightBorder.start - comfortDistanse )) {
+		} else if (offset <= (rightBorder.end + comfortDistanseOut) && offset >= (rightBorder.start - comfortDistanceIn)) {
 			this._rightBorderStickedToMouse = true;
 			this._stickOffset = offset - rightBorder.end;
 		} else {
