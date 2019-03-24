@@ -13,7 +13,7 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			title: 'Contest',
 			filename: 'index.html',
-			meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'}
+			meta: {viewport: 'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'}
 		})
 	],
 	module: {
