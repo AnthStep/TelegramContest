@@ -1,20 +1,20 @@
 export default function (graphContainer) {
 	const mainChartLayersContainer = document.createElement('div');
-	mainChartLayersContainer.style.cssText = 'width: 100%; height: 360px; position: relative';
+	mainChartLayersContainer.style.cssText = 'width: 100%; height: 360px; position: relative; -webkit-user-select: none;';
 	graphContainer.append(mainChartLayersContainer);
 
 	const xAxisLayer = document.createElement('canvas');
-	xAxisLayer.style.cssText = 'width: 100%; height: 10%';
+	xAxisLayer.style.cssText = 'width: 100%; height: 10%; -webkit-user-select: none;';
 	const yAxisLayer = document.createElement('canvas');
-	yAxisLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 1';
+	yAxisLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 1; -webkit-user-select: none;';
 	const linesContainer = document.createElement('div');
-	linesContainer.style.cssText = 'width: 100%; height: 90%; position: relative; z-index: 2';
+	linesContainer.style.cssText = 'width: 100%; height: 90%; position: relative; z-index: 2; -webkit-user-select: none;';
 	const selectorLayer = document.createElement('canvas');
-	selectorLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 3';
+	selectorLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 3; -webkit-user-select: none;';
 	const selectorDescriptionLayer = document.createElement('div');
-	selectorDescriptionLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 4';
+	selectorDescriptionLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 4; -webkit-user-select: none;';
 	const selectorDetectionLayer = document.createElement('div');
-	selectorDetectionLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 5';
+	selectorDetectionLayer.style.cssText = 'width: 100%; height: 90%; top: 0; left: 0; position: absolute; z-index: 5; -webkit-user-select: none;';
 	mainChartLayersContainer.append(yAxisLayer);
 	mainChartLayersContainer.append(linesContainer);
 	mainChartLayersContainer.append(xAxisLayer);
