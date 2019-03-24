@@ -23,7 +23,7 @@ export default class ChartToggler extends HTMLElementEntity {
 		const data = this.getData();
 		const layerHeight = this._canvasLayer.height;
 		const layerWidth = this._canvasLayer.width;
-		const margin  = 6 * AppWrapper.QUALITY_MODIFIER;
+		const margin  = 10 * AppWrapper.QUALITY_MODIFIER;
 		const radius = layerHeight / 2 - margin;
 		const centerX = radius + margin;
 		const centerY = layerHeight / 2;
@@ -127,7 +127,7 @@ export default class ChartToggler extends HTMLElementEntity {
 
 	redrawColor() {
 		this.getHTMLElement().style.color = AppWrapper.colors.lineToggler.textColor;
-		this.getHTMLElement().style.borderColor = AppWrapper.colors.lineToggler.borderColor;
+		this.getHTMLElement().style.webkitBoxShadow = `inset 0px 0px 0px 1px ${AppWrapper.colors.lineToggler.borderColor}`;
 		this._drawCheckBox(Number(this._toggled));
 	}
 }
