@@ -10,8 +10,6 @@ export default class MainChartLine extends HTMLElementEntity {
 		this._color = color;
 		this._mainGraph = mainGraph;
 		this._lastOpacity = 1,
-		this.min = Math.min(...data);
-		this.max = Math.max(...data);
 		this.getHTMLElement().width = this.getHTMLElement().offsetWidth * AppWrapper.QUALITY_MODIFIER;
 		this.getHTMLElement().height = this.getHTMLElement().offsetHeight * AppWrapper.QUALITY_MODIFIER;
 	}
@@ -24,8 +22,8 @@ export default class MainChartLine extends HTMLElementEntity {
 		let min = data[firstIdx];
 		let max = data[firstIdx];
 		for (let idx = firstIdx+1; idx <= lastIdx; idx++) {
-			min = Math.min(min, data[idx]);
-			max = Math.max(max, data[idx]);
+			min = min > data[idx] ? data[idx] : min;
+			max = max < data[idx] ? data[idx] : max;
 		}
 		return {min, max};
 	}
@@ -51,7 +49,7 @@ export default class MainChartLine extends HTMLElementEntity {
 		ctx.resetTransform();
 		ctx.transform(1, 0, 0, -1, 0, layerHeight);
 		ctx.globalAlpha = opacity;
-		ctx.lineWidth = AppWrapper.QUALITY_MODIFIER * 1;
+		ctx.lineWidth = AppWrapper.QUALITY_MODIFIER * 2;
 		ctx.lineJoin = 'round';
 		ctx.strokeStyle = this._color;
 		ctx.clearRect(0, 0, layerWidth, layerHeight);

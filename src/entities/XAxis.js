@@ -1,5 +1,6 @@
 import HTMLElementEntity from '../sharedClasses/HTMLElementEntity';
 import Graph from './Graph';
+import AppWrapper from '../singletons/AppWrapper';
 
 export default class xAxis extends HTMLElementEntity {
 	constructor(container, data, parentGraph = new Graph()) {
@@ -34,7 +35,7 @@ export default class xAxis extends HTMLElementEntity {
 
 		ctx.clearRect(0, 0, width, height);
 		ctx.font = '12px Arial';
-		ctx.fillStyle = '#98a2a9';
+		ctx.fillStyle = AppWrapper.colors.axis.text;
 		for (let cursor = renderStart; cursor <= renderEnd; cursor += minStep) {
 			const dataIndex = Math.floor(data.length * cursor);
 			const dataValue = data[dataIndex];
@@ -97,5 +98,9 @@ export default class xAxis extends HTMLElementEntity {
 			layerPosition,
 			idx: positionIdx
 		};
+	}
+
+	redrawColor() {
+		this.updateControlPosition();
 	}
 }

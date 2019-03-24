@@ -4,6 +4,6 @@ export default function () {
 	body.append(appWrapper);
 	appWrapper.id = 'graph-application';
 	body.style.cssText = 'margin: 0';
-	appWrapper.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column';
+	appWrapper.style.cssText = 'width: 100%; height: 100%; display: flex; flex-direction: column; position: relative';
 	return appWrapper;
 }

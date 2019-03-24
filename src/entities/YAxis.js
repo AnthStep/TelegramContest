@@ -8,11 +8,6 @@ export default class yAxis extends HTMLElementEntity {
 		this.axisesArr = [];
 		this.getHTMLElement().width = this.getHTMLElement().offsetWidth * AppWrapper.QUALITY_MODIFIER;
 		this.getHTMLElement().height = this.getHTMLElement().offsetHeight * AppWrapper.QUALITY_MODIFIER;
-		const ctx = this.getHTMLElement().getContext('2d');
-		ctx.font = '26px Arial';
-		ctx.textAlign ='left';
-		ctx.fillStyle = '#98a2a9';
-		ctx.strokeStyle = '#e0e6ea';
 	}
 
 	updateLimits(min, max) {
@@ -83,6 +78,11 @@ export default class yAxis extends HTMLElementEntity {
 		const renderMin = this._prevMin;
 		const renderMax = this._prevMax;
 		const ctx = this.getHTMLElement().getContext('2d');
+		ctx.font = 'lighter 26px sans-serif';
+		ctx.textAlign ='left';
+		ctx.fillStyle = AppWrapper.colors.axis.text;
+		ctx.strokeStyle = AppWrapper.colors.axis.line;
+		ctx.lineWidth = AppWrapper.QUALITY_MODIFIER * 1.5;
 		max -= (max-min) * (0.2);
 		const axisFrameHeight = max - min;
 		const minStep = axisFrameHeight / 5;
@@ -94,8 +94,8 @@ export default class yAxis extends HTMLElementEntity {
 				ctx.globalAlpha = opacity;
 				const canvasPosition = height * (1 - ((pos - renderMin) / renderFrameHeight));
 				ctx.beginPath();
-				ctx.moveTo(0, canvasPosition - 1);
-				ctx.lineTo(width, canvasPosition - 1);
+				ctx.moveTo(0, canvasPosition - 3);
+				ctx.lineTo(width, canvasPosition - 3);
 				ctx.stroke();
 				ctx.fillText(this._getValue(pos), 0, canvasPosition - 10);
 			}
@@ -111,5 +111,10 @@ export default class yAxis extends HTMLElementEntity {
 		} else {
 			return value;
 		}
+	}
+
+	redrawColor() {
+		this._clearCanvas();
+		this.axisesArr.forEach(axis => this._drawAxis(axis));
 	}
 }

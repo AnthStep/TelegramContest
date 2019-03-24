@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import HTMLElementEntity from '../sharedClasses/HTMLElementEntity';
+import AppWrapper from '../singletons/AppWrapper';
 
 export default class ValueSelector extends HTMLElementEntity {
 	constructor(layer, data, mainGraph, descriptionLayer, detectionLayer) {
@@ -10,7 +11,16 @@ export default class ValueSelector extends HTMLElementEntity {
 		layer.height = layer.offsetHeight;
 		layer.width = layer.offsetWidth;
 		this._detectionLayer.addEventListener('mousemove', this._onMouseMove.bind(this));
+		this._detectionLayer.addEventListener('touchmove', this._onTouchMove.bind(this));
+		this._detectionLayer.addEventListener('touchstart', this._onTouchMove.bind(this));
 		this._detectionLayer.addEventListener('mouseout', this._onMouseOut.bind(this));
+		window.addEventListener('touchstart', this._onMouseOut.bind(this));
+	}
+
+	_onTouchMove(event) {
+		const offsetX = event.touches[0].clientX - this._detectionLayer.getBoundingClientRect().left;
+		event.stopPropagation();
+		this._onMouseMove({offsetX});
 	}
 
 	_onMouseMove({offsetX}) {
@@ -32,7 +42,7 @@ export default class ValueSelector extends HTMLElementEntity {
 		const xPosition = xAxisLabel.layerPosition * width;
 		const yAxisLabels = this._mainGraph._mainChart.getActiveLineValuesByIndex(xAxisLabel.idx);
 		ctx.clearRect(0,0, width, height);
-		ctx.strokeStyle = '#e0e6ea';
+		ctx.strokeStyle = AppWrapper.colors.cursor.line;
 		ctx.beginPath();
 		ctx.moveTo(xPosition, 0);
 		ctx.lineTo(xPosition, height);
@@ -44,7 +54,7 @@ export default class ValueSelector extends HTMLElementEntity {
 			ctx.beginPath();
 			ctx.arc(xPosition, yPosition, 5, 0, 2 * Math.PI);
 			ctx.fill();
-			ctx.fillStyle = '#ffffff';
+			ctx.fillStyle = AppWrapper.colors.appWrapper.backgroundColor;
 			ctx.beginPath();
 			ctx.arc(xPosition, yPosition, 3, 0, 2 * Math.PI);
 			ctx.fill();
@@ -53,15 +63,15 @@ export default class ValueSelector extends HTMLElementEntity {
 		const descriptionBlock = document.createElement('div');
 		descriptionBlock.style.cssText = `
 			position: absolute; 
-			background: ${'white'}; 
+			background: ${AppWrapper.colors.cursor.background}; 
 			padding: 3px 12px;
-			border: 1px solid ${'#eeeeee'};
+			border: 1px solid ${AppWrapper.colors.cursor.border};
 			box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.15);
 			top: 10px;
 			white-space: nowrap;
 			border-radius: 3px`;
 		descriptionBlock.innerHTML = `
-			<div style="font:14px Arial; font-weight: 500; margin-bottom: 6px">${xAxisLabel.text}</div>
+			<div style="font:14px sans-serif; font-weight: 500; margin-bottom: 6px; color: ${AppWrapper.colors.cursor.text}">${xAxisLabel.text}</div>
 			<div style="display: flex">
 				${yAxisLabels.map(yLabel => {
 					return `

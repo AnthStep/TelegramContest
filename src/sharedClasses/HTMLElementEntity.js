@@ -2,7 +2,6 @@ export default class {
 	constructor(htmlElement, data) {
 		this._element = htmlElement;
 		this._data = data;
-		requestAnimationFrame(this._onInit.bind(this));
 	}
 
 	getData() {
@@ -12,6 +11,4 @@ export default class {
 	getHTMLElement() {
 		return this._element;
 	}
-
-	_onInit() {}
 }

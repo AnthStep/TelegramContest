@@ -69,4 +69,11 @@ export default class Graph extends HTMLElementEntity {
 		return this._previewChart.controlPosition;
 	}
 
+	redrawColors() {
+		this._togglersList.forEach(toggler => toggler.redrawColor());
+		this._previewChart.redrawColor();
+		this.xAxis.redrawColor();
+		this._yAxis.redrawColor();
+	}
+
 }

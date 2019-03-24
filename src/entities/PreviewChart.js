@@ -12,16 +12,27 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._controlLayer = controlLayer;
 		this.PADDING_MODIFIER = 0.3;
 		this.controlPosition = { start: .5, end: .7 };
-		this._controlFrameVerticalBorderWidth = .015;
+		this._controlFrameVerticalBorderWidth = .012;
 		this._controlFrameHorizontalBorderWidth = .05;
 		this._minFrameWidth = 0.1;
 		this._chartLines = [];
 		this._initCharts();
 		this.redraw();
 		this._controlLayer.addEventListener('mousedown', this._mouseDown.bind(this));
+		this._controlLayer.addEventListener('touchstart', this._touchStart.bind(this));
 		document.addEventListener('mouseup', this._mouseReleasedOverDocument.bind(this));
 		document.addEventListener('mousemove', this._mouseMoveOverDocument.bind(this));
-		document.addEventListener('contextmenu', this._mouseReleasedOverDocument.bind(this));
+		document.addEventListener('touchmove', event => this._mouseMoveOverDocument(event.touches[0]));
+		document.addEventListener('contextmenu', (event) => {
+			if (this._frameStickedToMouse || this._leftBorderStickedToMouse || this._rightBorderStickedToMouse) {
+				event.preventDefault();
+				event.stopPropagation();
+				if (!this.touched) {
+					this._mouseReleasedOverDocument();
+				}
+			}
+		});
+		document.addEventListener('touchend', this._mouseReleasedOverDocument.bind(this));
 	}
 
 	_initCharts() {
@@ -60,13 +71,14 @@ export default class PreviewChart extends HTMLElementEntity {
 		const layerHeight = this._controlLayer.height;
 		const layerWidth = this._controlLayer.width;
 		ctx.clearRect(0, 0, layerWidth, layerHeight);
-		ctx.fillStyle = 'rgba(246, 249, 255, 0.8)';
+		ctx.fillStyle = AppWrapper.colors.previewChart.overlay;
 		ctx.fillRect(0, 0, layerWidth, layerHeight);
 
 		const startX = this.controlPosition.start * layerWidth;
 		const endX = this.controlPosition.end * layerWidth;
 		const controlWidth = endX - startX;
-		ctx.fillStyle = 'rgba(10, 10, 255, 0.1)';
+		ctx.fillStyle = AppWrapper.colors.previewChart.activeFrame;
+		ctx.clearRect(startX, 0, controlWidth, layerHeight);
 		ctx.fillRect(startX, 0, controlWidth, layerHeight);
 		ctx.clearRect(
 			startX + layerWidth * this._controlFrameVerticalBorderWidth,
@@ -110,8 +122,17 @@ export default class PreviewChart extends HTMLElementEntity {
 		}
 	}
 
-	_mouseDown(evt) {
-		const offset = evt.offsetX * AppWrapper.QUALITY_MODIFIER / this._controlLayer.width;
+	_touchStart(event) {
+		const offsetX = event.touches[0].clientX - this._controlLayer.getBoundingClientRect().left;
+		this._touched = true;
+		this._mouseDown({offsetX});
+		if (event.cancelable) {
+			event.preventDefault();
+		}
+	}
+
+	_mouseDown({offsetX}) {
+		const offset = offsetX * AppWrapper.QUALITY_MODIFIER / this._controlLayer.width;
 		const { start, end } = this.controlPosition;
 		const leftBorder = {
 			start,
@@ -121,11 +142,15 @@ export default class PreviewChart extends HTMLElementEntity {
 			start: end - this._controlFrameVerticalBorderWidth,
 			end
 		};
+		let comfortDistanse = 0;
+		if (this._touched) {
+			comfortDistanse = this._controlFrameVerticalBorderWidth * 2;
+		}
 
-		if (offset <= leftBorder.end && offset >= leftBorder.start) {
+		if (offset <= (leftBorder.end + comfortDistanse) && offset >= (leftBorder.start - comfortDistanse)) {
 			this._leftBorderStickedToMouse = true;
 			this._stickOffset = offset - leftBorder.start;
-		} else if (offset <= rightBorder.end && offset >= rightBorder.start) {
+		} else if (offset <= (rightBorder.end + comfortDistanse) && offset >= (rightBorder.start - comfortDistanse)) {
 			this._rightBorderStickedToMouse = true;
 			this._stickOffset = offset - rightBorder.end;
 		} else {
@@ -146,10 +171,10 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._leftBorderStickedToMouse = false;
 		this._rightBorderStickedToMouse = false;
 		this.stickOffset = 0;
+		this._touched = false;
 	}
 
 	_mouseMoveOverDocument(evt) {
-
 		if (this._frameStickedToMouse || this._leftBorderStickedToMouse || this._rightBorderStickedToMouse) {
 			const offset = ((evt.clientX - this._controlLayer.getBoundingClientRect().left) * AppWrapper.QUALITY_MODIFIER / this._controlLayer.width) - this._stickOffset;
 			if (this._frameStickedToMouse) {
@@ -177,5 +202,9 @@ export default class PreviewChart extends HTMLElementEntity {
 		this._chartLines
 			.filter(line => line.key !== key && line.displayed)
 			.forEach(line => line.changeLimits(min, max));
+	}
+
+	redrawColor() {
+		this._drawControl();
 	}
 }

@@ -34,6 +34,9 @@ export default class ChartToggler extends HTMLElementEntity {
 	}
 
 	_drawCheckBoxIcon(ctx, centerX, centerY, progress) {
+		if (!progress) {
+			return;
+		}
 		const chbSize = 2 * AppWrapper.QUALITY_MODIFIER * progress;
 		const chbCenterX = centerX - 0.5 * chbSize;
 		const chbCenterY = centerY + 2 * chbSize;
@@ -49,14 +52,14 @@ export default class ChartToggler extends HTMLElementEntity {
 	}
 
 	_drawCheckBoxCircle(ctx, centerX, centerY, color, radius, progress) {
-		const innerRadius = radius * 0.85;
+		const innerRadius = radius * 0.8;
 		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI * 2);
 		ctx.fill();
 
 		ctx.beginPath();
-		ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+		ctx.fillStyle = AppWrapper.colors.appWrapper.backgroundColor;
 		ctx.arc(centerX, centerY, innerRadius * (1 - progress), 0, 2 * Math.PI * 2);
 		ctx.fill();
 	}
@@ -83,14 +86,14 @@ export default class ChartToggler extends HTMLElementEntity {
 		const centerX = radius + margin;
 		const centerY = layerHeight / 2;
 		let frameCount = 20;
-		ctx.fillStyle = 'blue';
+		ctx.fillStyle = AppWrapper.colors.lineToggler.rippleColor;
 
 		const drawFrame = (frame = 1) => {
 			const progress = frame/frameCount;
 			ctx.clearRect(0, 0, layerWidth, layerHeight);
 			ctx.globalAlpha = 0.1 * (1 - progress);
 			ctx.beginPath();
-			ctx.fillStyle = 'blue';
+			ctx.fillStyle = AppWrapper.colors.lineToggler.rippleColor;
 			ctx.arc(centerX, centerY, radius * (1 + 6 * progress), 0, 2 * Math.PI * 2);
 			ctx.fill();
 			requestAnimationFrame(() => {
@@ -107,7 +110,7 @@ export default class ChartToggler extends HTMLElementEntity {
 			const progress = frame / frameCount;
 			this._drawCheckBox(progress);
 			requestAnimationFrame(() => {
-				if (!this._toggled && frame > 1) {
+				if (!this._toggled && frame > 0) {
 					drawFrame(--frame);
 				} else if (this._toggled && frame < frameCount) {
 					drawFrame(++frame);
@@ -120,5 +123,11 @@ export default class ChartToggler extends HTMLElementEntity {
 
 	isToggled() {
 		return this._toggled;
+	}
+
+	redrawColor() {
+		this.getHTMLElement().style.color = AppWrapper.colors.lineToggler.textColor;
+		this.getHTMLElement().style.borderColor = AppWrapper.colors.lineToggler.borderColor;
+		this._drawCheckBox(Number(this._toggled));
 	}
 }
